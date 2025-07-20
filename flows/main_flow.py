@@ -9,5 +9,5 @@ class MainFlow:
         self.main_page.click_new_appointment_button()
 
     
-    def switch_patient(self, patient_name: str):
-        self.main_page.switch_patient(patient_name)
+    def switch_to_patient(self, patient_name: str):
+        self.main_page.switch_to_patient(patient_name)

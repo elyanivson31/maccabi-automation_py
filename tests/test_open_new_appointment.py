@@ -7,14 +7,14 @@ from api.maccabi_api import call_maccabi_search_api
 
 def test_open_new_appointment(driver):
     contact = DataLoader().get_contact_by_name("yaniv")
+    selected_patient = contact["selectedPatient"]
 
     # Create and reuse WebFlow instance
     web_flow = WebFlow(driver)
 
     web_flow.login_flow().login_to_portal(contact)
     
-    if "selectedPatient" in contact:
-        web_flow.main_flow().switch_patient(contact["selectedPatient"])
+    web_flow.main_flow().switch_to_patient(selected_patient)
 
     web_flow.main_flow().start_new_appointment()
 
