@@ -1,16 +1,17 @@
 {
   "contacts": [
     {
-      "name": "yaniv",
+  "name": "yaniv",
       "username": "036861672",
       "password": "AaSsDd22",
       "selectedPatient": "ינאי",
-        "doctorName": "מויסייב רומן"
-    },
-    {
-      "name": "adminUser",
-      "username": "admin",
-      "password": "admin123"
+      "doctorName": "מויסייב רומן"
     }
-  ]
+  ],
+  "logicSettings": {
+    "appointmentThresholdDate": "2025-08-18T00:00:00",
+    "appointmentServiceName": "רופאים/ות"
+
+  }
 }
+

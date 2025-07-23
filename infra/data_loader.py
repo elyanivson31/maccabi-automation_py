@@ -18,3 +18,12 @@ class DataLoader:
             if contact.get("name") == name:
                 return contact
         raise ValueError(f"Contact with name '{name}' not found.")
+    
+    def get_logic_setting(self, key):
+        """
+        Returns a value from the 'logicSettings' section of the JSON by key.
+        """
+        logic_settings = self.data.get("logicSettings", {})
+        if key in logic_settings:
+            return logic_settings[key]
+        raise KeyError(f"Key '{key}' not found in logicSettings.")

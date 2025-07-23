@@ -1,5 +1,7 @@
+from flows.find_doctor_flow import FindDoctorFlow
 from flows.login_flow import LoginFlow
 from flows.main_flow import MainFlow
+from flows.set_appointment_flow import SetAppointmentFlow
 
 
 class WebFlow:
@@ -7,6 +9,8 @@ class WebFlow:
         self.driver = driver
         self._login_flow = None
         self._main_flow = None
+        self._set_appimtment_flow = None
+        self._find_doctor_flow  = None
 
     def login_flow(self):
         if not self._login_flow:
@@ -17,3 +21,14 @@ class WebFlow:
         if not self._main_flow:
             self._main_flow = MainFlow(self.driver)
         return self._main_flow
+
+    def set_appointment_flow(self):
+        if not self._set_appimtment_flow:
+            self._set_appimtment_flow = SetAppointmentFlow(self.driver)
+        return self._set_appimtment_flow
+    
+    def find_doctor_flow(self):
+        if not self._find_doctor_flow:
+            self._find_doctor_flow = FindDoctorFlow(self.driver)
+        return self._find_doctor_flow
+

@@ -1,13 +1,23 @@
 import uuid
-from flows.web_flow import WebFlow
+from flows.set_appointment_flow import SetAppointmentFlow
 from flows.web_flow import WebFlow
 from flows.main_flow import MainFlow
 from infra.data_loader import DataLoader
 from api.maccabi_api import call_maccabi_search_api
+from datetime import datetime
+from utils.appointment_utils import is_appointment_sooner_than_threshold
+
 
 def test_open_new_appointment(driver):
-    contact = DataLoader().get_contact_by_name("yaniv")
+    data_loader = DataLoader()
+    contact = data_loader.get_contact_by_name("yaniv")
     selected_patient = contact["selectedPatient"]
+
+    threshold_str = data_loader.get_logic_setting("appointmentThresholdDate")
+    threshold_date = datetime.fromisoformat(threshold_str)
+
+    service_name = data_loader.get_logic_setting("appointmentServiceName")
+
 
     # Create and reuse WebFlow instance
     web_flow = WebFlow(driver)
@@ -34,6 +44,15 @@ def test_open_new_appointment(driver):
     }
 
     response = call_maccabi_search_api(driver, payload)
-    a = response.text
+    response_json = response.json()
     assert response.status_code == 200
     print(response.json())
+
+
+    assert is_appointment_sooner_than_threshold(response_json, threshold_date)
+
+    web_flow.set_appointment_flow().continue_to_doctor_search()
+    web_flow.set_appointment_flow().choose_service(service_name)
+
+
+    web_flow.find_doctor_flow().search_for_doctor(contact["doctorName"])
