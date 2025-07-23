@@ -1,4 +1,6 @@
 import uuid
+
+from selenium.webdriver.chrome.webdriver import WebDriver
 from flows.set_appointment_flow import SetAppointmentFlow
 from flows.web_flow import WebFlow
 from flows.main_flow import MainFlow
@@ -8,7 +10,7 @@ from datetime import datetime
 from utils.appointment_utils import is_appointment_sooner_than_threshold
 
 
-def test_open_new_appointment(driver):
+def test_open_new_appointment(driver: WebDriver):
     data_loader = DataLoader()
     contact = data_loader.get_contact_by_name("yaniv")
     selected_patient = contact["selectedPatient"]
@@ -58,4 +60,9 @@ def test_open_new_appointment(driver):
     
 
     web_flow.find_doctor_flow().select_set_appointment()
-    web_flow.choose_appointment_type_flow().select_appointment_type(appointment_type)   
+    
+    web_flow.choose_appointment_type_flow().select_appointment_type_and_continue(
+    appointment_type)
+
+    web_flow.choose_appointment_type_flow().select_under_18_if_present()
+    web_flow.choose_appointment_type_flow().agree_to_come_with_personal_health_card()

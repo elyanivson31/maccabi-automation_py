@@ -37,4 +37,3 @@ class WebFlow:
         if not self._choose_appointment_type_flow:
             self._choose_appointment_type_flow = ChooseAppointmentTypeFlow(self.driver)
         return self._choose_appointment_type_flow
-
