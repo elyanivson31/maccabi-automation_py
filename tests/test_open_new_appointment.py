@@ -17,7 +17,8 @@ def test_open_new_appointment(driver):
     threshold_date = datetime.fromisoformat(threshold_str)
 
     service_name = data_loader.get_logic_setting("appointmentServiceName")
-
+    city_name = data_loader.get_logic_setting("appointmentDoctorCity")
+    appointment_type = data_loader.get_logic_setting("appointmentType")
 
     # Create and reuse WebFlow instance
     web_flow = WebFlow(driver)
@@ -53,6 +54,8 @@ def test_open_new_appointment(driver):
 
     web_flow.set_appointment_flow().continue_to_doctor_search()
     web_flow.set_appointment_flow().choose_service(service_name)
+    web_flow.find_doctor_flow().search_for_doctor(contact["doctorName"], city_name)
+    
 
-
-    web_flow.find_doctor_flow().search_for_doctor(contact["doctorName"])
+    web_flow.find_doctor_flow().select_set_appointment()
+    web_flow.choose_appointment_type_flow().select_appointment_type(appointment_type)   

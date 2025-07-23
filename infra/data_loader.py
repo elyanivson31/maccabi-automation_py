@@ -27,3 +27,4 @@ class DataLoader:
         if key in logic_settings:
             return logic_settings[key]
         raise KeyError(f"Key '{key}' not found in logicSettings.")
+

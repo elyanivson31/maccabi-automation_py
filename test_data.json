@@ -10,7 +10,9 @@
   ],
   "logicSettings": {
     "appointmentThresholdDate": "2025-08-18T00:00:00",
-    "appointmentServiceName": "רופאים/ות"
+    "appointmentServiceName": "רופאים/ות",
+    "appointmentDoctorCity": "ראשון לציון",
+    "appointmentType": "תור במרפאה"
 
   }
 }
