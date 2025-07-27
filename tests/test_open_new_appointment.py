@@ -8,6 +8,7 @@ from infra.data_loader import DataLoader
 from api.maccabi_api import call_maccabi_search_api
 from datetime import datetime
 from utils.appointment_utils import is_appointment_sooner_than_threshold
+from utils.notifier import notify_telegram_channel
 
 
 def test_open_new_appointment(driver: WebDriver):
@@ -52,7 +53,17 @@ def test_open_new_appointment(driver: WebDriver):
     print(response.json())
 
 
-    assert is_appointment_sooner_than_threshold(response_json, threshold_date)
+    # assert is_appointment_sooner_than_threshold(response_json, threshold_date)
+
+
+    if is_appointment_sooner_than_threshold(response_json, threshold_date):
+        notify_telegram_channel(
+    f"🎉 נמצא תור מוקדם!\n"
+    f"👤 מטופל: {contact["selectedPatient"]}\n"
+    f"🧑‍⚕️ רופא: {contact["doctorName"]}\n"
+    f"🗓️ תאריך זמין: {threshold_date}\n"
+)
+
 
     web_flow.set_appointment_flow().continue_to_doctor_search()
     web_flow.set_appointment_flow().choose_service(service_name)
