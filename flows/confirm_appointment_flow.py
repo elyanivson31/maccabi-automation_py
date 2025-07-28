@@ -1,5 +1,6 @@
 from pages.confirm_appointment_page import ConfirmAppointmentPage
 from datetime import datetime
+from utils.notifier import notify_telegram_channel
 
 class ConfirmAppointmentFlow:
     def __init__(self, driver):
@@ -35,8 +36,8 @@ class ConfirmAppointmentFlow:
             raise ValueError(f"Invalid date format found in text: {displayed_str}")
 
 
-    def choose_time_slot(self, preference="latest"):
-        self.page.click_time_slot(preference)
+    def choose_time_slot(self):
+        self.page.click_first_available_time_slot()
 
     def confirm_appointment(self):
         self.page.click_confirm_appointment_button()
@@ -46,5 +47,5 @@ class ConfirmAppointmentFlow:
         self.page.click_continue_button()
 
 
-    def verify_appointment_success(self):
-        assert self.page.is_success_message_displayed(), "קביעת התור לא הצליחה או שההודעה של סיום התהליך השתנתה"
+    def verify_appointment_success(self) -> bool:
+        return self.page.is_success_message_displayed()
