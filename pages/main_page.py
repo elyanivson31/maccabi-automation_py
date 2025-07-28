@@ -21,7 +21,7 @@ class MainPage:
             new_appointment_btn.click()
 
     def switch_to_patient(self, patient_name):
-        wait = WebDriverWait(self.driver, 10)
+        wait = WebDriverWait(self.driver, 20)
 
         # Retry once in case the first element gets stale
         for attempt in range(2):

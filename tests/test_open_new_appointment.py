@@ -1,6 +1,7 @@
 import uuid
 
 from selenium.webdriver.chrome.webdriver import WebDriver
+from flows.confirm_appointment_flow import ConfirmAppointmentFlow
 from flows.set_appointment_flow import SetAppointmentFlow
 from flows.web_flow import WebFlow
 from flows.main_flow import MainFlow
@@ -77,3 +78,12 @@ def test_open_new_appointment(driver: WebDriver):
 
     web_flow.choose_appointment_type_flow().select_under_18_if_present()
     web_flow.choose_appointment_type_flow().agree_to_come_with_personal_health_card()
+
+
+    actual_date = web_flow.confirm_appointment_flow().get_displayed_appointment_date()
+
+    assert actual_date.date() == threshold_date.date(), (
+    f"❌ Appointment date mismatch!\n"
+    f"🟡 Expected (threshold): {threshold_date.strftime('%d/%m/%Y')}\n"
+    f"🔵 Displayed on page:   {actual_date.strftime('%d/%m/%Y')}"
+)
