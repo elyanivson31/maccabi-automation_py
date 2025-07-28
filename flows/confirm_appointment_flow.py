@@ -33,3 +33,18 @@ class ConfirmAppointmentFlow:
             return datetime.strptime(displayed_str, "%d/%m/%y")
         except ValueError:
             raise ValueError(f"Invalid date format found in text: {displayed_str}")
+
+
+    def choose_time_slot(self, preference="latest"):
+        self.page.click_time_slot(preference)
+
+    def confirm_appointment(self):
+        self.page.click_confirm_appointment_button()
+
+    def confirm_and_continue(self):
+        self.page.click_confirm_button()
+        self.page.click_continue_button()
+
+
+    def verify_appointment_success(self):
+        assert self.page.is_success_message_displayed(), "קביעת התור לא הצליחה או שההודעה של סיום התהליך השתנתה"

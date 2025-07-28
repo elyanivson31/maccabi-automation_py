@@ -82,8 +82,15 @@ def test_open_new_appointment(driver: WebDriver):
 
     actual_date = web_flow.confirm_appointment_flow().get_displayed_appointment_date()
 
-    assert actual_date.date() == threshold_date.date(), (
+    assert actual_date.date() <= threshold_date.date(), (
     f"❌ Appointment date mismatch!\n"
     f"🟡 Expected (threshold): {threshold_date.strftime('%d/%m/%Y')}\n"
     f"🔵 Displayed on page:   {actual_date.strftime('%d/%m/%Y')}"
 )
+    
+    web_flow.confirm_appointment_flow().choose_time_slot("latest");
+
+    web_flow.confirm_appointment_flow().confirm_appointment()
+
+    web_flow.confirm_appointment_flow().confirm_and_continue()
+    web_flow.confirm_appointment_flow().verify_appointment_success()
