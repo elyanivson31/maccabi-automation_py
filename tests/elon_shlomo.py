@@ -1,46 +1,35 @@
 import uuid
-
 from selenium.webdriver.chrome.webdriver import WebDriver
-from flows.confirm_appointment_flow import ConfirmAppointmentFlow
-from flows.set_appointment_flow import SetAppointmentFlow
 from flows.web_flow import WebFlow
-from flows.main_flow import MainFlow
 from infra.data_loader import DataLoader
 from api.maccabi_api import call_maccabi_search_api
 from datetime import datetime
-from utils.appointment_utils import get_soonest_appointment_before_threshold, get_soonest_appointment_in_city, is_appointment_sooner_than_threshold
+from utils.appointment_utils import get_soonest_appointment_in_city
 from utils.notifier import notify_telegram_channel
 
 
-def elon_shlomo(driver: WebDriver):
-    data_loader = DataLoader()
-    contact = data_loader.get_contact_by_name("dana_elon_shlomo")
-    selected_patient = contact["selectedPatient"]
+def elon_shlomo(driver: WebDriver) -> bool:
+    try:
+        data_loader = DataLoader()
+        contact = data_loader.get_contact_by_name("dana_elon_shlomo")
+        selected_patient = contact["selectedPatient"]
 
-    threshold_str = data_loader.get_contact_setting("dana_elon_shlomo", "appointmentThresholdDate")
-    threshold_date = datetime.fromisoformat(threshold_str)
+        threshold_str = data_loader.get_contact_setting("dana_elon_shlomo", "appointmentThresholdDate")
+        threshold_date = datetime.fromisoformat(threshold_str)
 
+        service_name = data_loader.get_contact_setting("dana_elon_shlomo", "appointmentServiceName")
+        city_name = data_loader.get_contact_setting("dana_elon_shlomo", "appointmentDoctorCity")
+        appointment_type = data_loader.get_contact_setting("dana_elon_shlomo", "appointmentType")
 
+        web_flow = WebFlow(driver)
+        web_flow.login_flow().login_to_portal(contact)
+        web_flow.main_flow().switch_to_patient(selected_patient)
+        web_flow.main_flow().start_new_appointment()
 
-    service_name = data_loader.get_contact_setting("dana_elon_shlomo", "appointmentServiceName")
+        if "doctorName" not in contact:
+            raise ValueError("Missing 'doctorName' in contact settings.")
 
-    city_name = data_loader.get_contact_setting("dana_elon_shlomo", "appointmentDoctorCity")
-    appointment_type = data_loader.get_contact_setting("dana_elon_shlomo", "appointmentType")
-
-    # Create and reuse WebFlow instance
-    web_flow = WebFlow(driver)
-
-    web_flow.login_flow().login_to_portal(contact)
-    
-    web_flow.main_flow().switch_to_patient(selected_patient)
-
-    web_flow.main_flow().start_new_appointment()
-
-    if "doctorName" not in contact:
-        raise ValueError("Missing 'doctorName' in contact settings.")
-    
-    # Assume you're logged in
-    payload = {
+        payload = {
             "DocName": contact["doctorName"],
             "ChapterId": "001",
             "InitiatorCode": "001",
@@ -48,24 +37,25 @@ def elon_shlomo(driver: WebDriver):
             "IsMobileApplication": 0,
             "PageNumber": 1,
             "RequestId": str(uuid.uuid4())
+        }
 
-    }
+        response = call_maccabi_search_api(driver, payload)
+        response_json = response.json()
+        assert response.status_code == 200
 
-    response = call_maccabi_search_api(driver, payload)
-    response_json = response.json()
-    assert response.status_code == 200
-    print(response.json())
+        soonest_date = get_soonest_appointment_in_city(response_json, threshold_date, city_name)
 
+        if soonest_date:
+            notify_telegram_channel(
+                f"🎉 נמצא תור מוקדם!\n"
+                f"👤 מטופל: {contact['selectedPatient']}\n"
+                f"🧑‍⚕️ רופא: {contact['doctorName']}\n"
+                f"🗓️ תאריך זמין: {soonest_date.strftime('%d/%m/%Y %H:%M')}\n"
+            )
+            return True
 
-    # assert is_appointment_sooner_than_threshold(response_json, threshold_date)
+        return False
 
-    soonest_date = get_soonest_appointment_in_city(response_json, threshold_date, city_name)
-
-    if soonest_date:
-        notify_telegram_channel(
-            f"🎉 נמצא תור מוקדם!\n"
-            f"👤 מטופל: {contact['selectedPatient']}\n"
-            f"🧑‍⚕️ רופא: {contact['doctorName']}\n"
-            f"🗓️ תאריך זמין: {soonest_date.strftime('%d/%m/%Y %H:%M')}\n"
-        )
-
+    except Exception as e:
+        print(f"❗ Exception in elon_shlomo: {e}")
+        raise
