@@ -1,11 +1,21 @@
-# utils/loop_runner.py
-import time
-from datetime import datetime, timedelta
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from tests.elon_shlomo import elon_shlomo
 
-if __name__ == "__main__":
+def run_test():
+    options = Options()
+    options.add_argument("--headless")  # For CI
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+
+    driver = webdriver.Chrome(options=options)
+    driver.implicitly_wait(10)
+
     try:
-        elon_shlomo()
+        elon_shlomo(driver)  # ✅ manually pass driver
+        return True
     except Exception as e:
-        print(f"No appointment or error: {e}")
+        print(f"❌ Test failed: {e}")
+        return False
+    finally:
+        driver.quit()
