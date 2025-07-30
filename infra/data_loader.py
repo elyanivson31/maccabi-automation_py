@@ -28,3 +28,9 @@ class DataLoader:
             return logic_settings[key]
         raise KeyError(f"Key '{key}' not found in logicSettings.")
 
+    def get_contact_setting(self, name, key):
+        contact = self.get_contact_by_name(name)
+        settings = contact.get("settings", {})
+        if key in settings:
+            return settings[key]
+        raise KeyError(f"Key '{key}' not found in settings for contact '{name}'")

@@ -8,11 +8,11 @@ from flows.main_flow import MainFlow
 from infra.data_loader import DataLoader
 from api.maccabi_api import call_maccabi_search_api
 from datetime import datetime
-from utils.appointment_utils import get_soonest_appointment_before_threshold, is_appointment_sooner_than_threshold
+from utils.appointment_utils import get_soonest_appointment_before_threshold, get_soonest_appointment_in_city, is_appointment_sooner_than_threshold
 from utils.notifier import notify_telegram_channel
 
 
-def test_open_new_appointment(driver: WebDriver):
+def elon_shlomo(driver: WebDriver):
     data_loader = DataLoader()
     contact = data_loader.get_contact_by_name("dana_elon_shlomo")
     selected_patient = contact["selectedPatient"]
@@ -59,7 +59,7 @@ def test_open_new_appointment(driver: WebDriver):
 
     # assert is_appointment_sooner_than_threshold(response_json, threshold_date)
 
-    soonest_date = get_soonest_appointment_before_threshold(response_json, threshold_date)
+    soonest_date = get_soonest_appointment_in_city(response_json, threshold_date, city_name)
 
     if soonest_date:
         notify_telegram_channel(
@@ -69,41 +69,3 @@ def test_open_new_appointment(driver: WebDriver):
             f"🗓️ תאריך זמין: {soonest_date.strftime('%d/%m/%Y %H:%M')}\n"
         )
 
-
-    web_flow.set_appointment_flow().continue_to_doctor_search()
-    web_flow.set_appointment_flow().choose_service(service_name)
-    web_flow.find_doctor_flow().search_for_doctor(contact["doctorName"], city_name)
-    
-
-    web_flow.find_doctor_flow().select_set_appointment()
-    
-    web_flow.choose_appointment_type_flow().select_appointment_type_and_continue(
-    appointment_type)
-
-    web_flow.choose_appointment_type_flow().select_under_18_if_present()
-    web_flow.choose_appointment_type_flow().agree_to_come_with_personal_health_card()
-
-
-    actual_date = web_flow.confirm_appointment_flow().get_displayed_appointment_date()
-
-    assert actual_date.date() <= threshold_date.date(), (
-    f"❌ Appointment date mismatch!\n"
-    f"🟡 Expected (threshold): {threshold_date.strftime('%d/%m/%Y')}\n"
-    f"🔵 Displayed on page:   {actual_date.strftime('%d/%m/%Y')}"
-)
-    
-    web_flow.confirm_appointment_flow().choose_time_slot()
-
-    web_flow.confirm_appointment_flow().confirm_appointment()
-
-    web_flow.confirm_appointment_flow().confirm_and_continue()
-    success = web_flow.confirm_appointment_flow().verify_appointment_success()
-
-    if success:
-          notify_telegram_channel(
-    f"🎉 התור נקבע בהצלחה!!\n"
-    f"👤 מטופל: {contact["selectedPatient"]}\n"
-    f"🧑‍⚕️ רופא: {contact["doctorName"]}\n"
-)
-    else:
-        raise AssertionError("❌ קביעת התור לא הצליחה או שההודעה של סיום התהליך השתנתה")
