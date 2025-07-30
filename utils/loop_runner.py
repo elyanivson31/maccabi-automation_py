@@ -9,7 +9,7 @@ from tests.elon_shlomo import elon_shlomo
 
 
 
-def run_loop_for_max_duration(max_minutes=120, interval_minutes=10):
+def run_loop_for_max_duration(max_minutes=300, interval_minutes=30):
     end_time = datetime.now() + timedelta(minutes=max_minutes)
 
     while datetime.now() < end_time:
