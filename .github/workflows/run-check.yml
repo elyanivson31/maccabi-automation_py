@@ -1,26 +1,28 @@
-name: Run Appointment Checker Every 10 Minutes
+name: Run Loop Runner Every 10 Minutes
 
 on:
   schedule:
-    - cron: "*/10 * * * *"  # Every 10 minutes
-  workflow_dispatch:        # Allow manual runs too
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
 
 jobs:
-  run-check:
+  run-script:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11"  # or whatever version you use
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run loop_runner.py
-        run: python utils/loop_runner.py
+      - name: Run loop_runner
+        run: |
+          export PYTHONPATH=.
+          python utils/loop_runner.py
