@@ -14,6 +14,8 @@ def create_chrome_driver():
     # options.add_argument("--headless")
     # Start Chrome maximized to ensure elements are visible
     options.add_argument("--start-maximized")
+
+
     # Additional Chrome options (if needed) can be added, for example:
     # options.add_argument("--disable-gpu")
     # options.add_argument("--no-sandbox")

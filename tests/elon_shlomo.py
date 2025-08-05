@@ -10,6 +10,7 @@ from utils.notifier import notify_telegram_channel
 
 def elon_shlomo(driver: WebDriver) -> bool:
     try:
+        driver.maximize_window()  # 👈 Maximize after initialization
         data_loader = DataLoader()
         contact = data_loader.get_contact_by_name("dana_elon_shlomo")
         selected_patient = contact["selectedPatient"]
@@ -23,7 +24,7 @@ def elon_shlomo(driver: WebDriver) -> bool:
 
         web_flow = WebFlow(driver)
         web_flow.login_flow().login_to_portal(contact)
-        web_flow.main_flow().switch_to_patient(selected_patient)
+        # web_flow.main_flow().switch_to_patient(selected_patient)
         web_flow.main_flow().start_new_appointment()
 
         if "doctorName" not in contact:
