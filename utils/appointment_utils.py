@@ -48,7 +48,7 @@ def get_soonest_appointment_in_city(api_response: dict, threshold_date: datetime
         date_str = item.get("CLOSEST_APPOINMENT_DATE")
         if not date_str:
             continue
-
+        print(f"❗ CLOSEST_APPOINMENT_DATE: {date_str}")
         try:
             date = datetime.fromisoformat(date_str)
             if date <= threshold_date:
