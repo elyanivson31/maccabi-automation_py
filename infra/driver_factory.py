@@ -13,7 +13,7 @@ def create_chrome_driver():
     # (Optional) Run Chrome in headless mode for tests without UI:
     # options.add_argument("--headless")
     # Start Chrome maximized to ensure elements are visible
-    options.add_argument("--start-maximized")
+
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
