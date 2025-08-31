@@ -25,6 +25,19 @@
         "appointmentDoctorCity": "יבנה ",
         "appointmentType": "תור במרפאה"
       }
-    }
+    },
+    {
+      "name": "yaniv_landov",
+      "username": "036861672",
+      "password": "AaSsDd22",
+      "selectedPatient": "יניב - החשבון שלי",
+      "doctorName": "לנדוב חגי",
+      "settings": {
+        "appointmentThresholdDate": "2025-09-29T00:00:00",
+        "appointmentServiceName": "רופאים/ות",
+        "appointmentDoctorCity": "ראשון לציון",
+        "appointmentType": "תור במרפאה"
+      }
+    },
   ]
 }
