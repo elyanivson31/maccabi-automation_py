@@ -1,75 +1,36 @@
-# # from selenium import webdriver
-# # import sys
-# # import os
-
-# # sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-# # from tests.elon_shlomo import elon_shlomo
-
-
-
-# # def main():
-# #     print("🔄 Running test once...")
-# #     driver = webdriver.Chrome()
-# #     try:
-# #         success = elon_shlomo(driver)
-# #         if success:
-# #             print("✅ Test passed.")
-# #         else:
-# #             print("❌ No appointment found.")
-# #     except Exception as e:
-# #         print(f"⚠️ Test raised an exception: {e}")
-# #     finally:
-# #         driver.quit()
-
-# # if __name__ == "__main__":
-# #     main()
-
-
-
-
-
-
-
-
-
-
-
 # utils/loop_runner.py
-import time
 from datetime import datetime, timedelta
-from selenium import webdriver
-import sys
+from pathlib import Path
+import time
 import os
+import pytest
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from tests.elon_shlomo import elon_shlomo
+ROOT = Path(__file__).resolve().parents[1]
+os.chdir(ROOT)
 
-
-def timestamp():
+def ts() -> str:
     return datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")
 
-
-def run_loop_for_max_duration(max_minutes=900, interval_minutes=10):
-    end_time = datetime.now() + timedelta(minutes=max_minutes)
+def run_loop() -> int:
+    interval = 6 * 60 * 60  # 6 hours
+    end_time = datetime.now() + timedelta(hours=24)
+    print(f"{ts()} start: run tests/disney_test.py every 6h for 24h (until {end_time:%Y-%m-%d %H:%M:%S})")
 
     while datetime.now() < end_time:
-        print(f"\n{timestamp()} 🔄 Running test...")
-        driver = webdriver.Chrome()
-        try:
-            success = elon_shlomo(driver)
-            if success:
-                print(f"{timestamp()} ✅ Test passed. Stopping loop.")
-                break
-            else:
-                print(f"{timestamp()} ❌ No appointment found. Retrying in {interval_minutes} minutes...")
-        except Exception as e:
-            print(f"{timestamp()} ⚠️ Test raised an exception: {e}")
-            print(f"{timestamp()} ⏱️ Will retry in {interval_minutes} minutes...")
-        finally:
-            driver.quit()
+        print(f"{ts()} running pytest…")
+        code = pytest.main(["-q", "tests/disney_test.py"])
+        if code == 0:
+            print(f"{ts()} success. exiting.")
+            return 0
 
-        time.sleep(interval_minutes * 60)
+        if datetime.now() + timedelta(seconds=interval) > end_time:
+            print(f"{ts()} 24h window reached. exiting.")
+            break
 
+        print(f"{ts()} sleeping 6h…")
+        time.sleep(interval)
+
+    return 1
 
 if __name__ == "__main__":
-    run_loop_for_max_duration()
+    raise SystemExit(run_loop())
