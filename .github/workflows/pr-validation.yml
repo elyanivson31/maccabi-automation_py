@@ -21,12 +21,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install cryptography
+          echo "✓ Dependencies installed"
 
       - name: Verify encrypted file exists
         run: |
@@ -57,12 +57,22 @@ jobs:
         env:
           TEST_DATA_ENCRYPTION_KEY: ${{ secrets.TEST_DATA_ENCRYPTION_KEY }}
         run: |
+          if [ -z "$TEST_DATA_ENCRYPTION_KEY" ]; then
+            echo "❌ Error: TEST_DATA_ENCRYPTION_KEY secret is not set!"
+            echo "   Please add it in GitHub Settings > Secrets > Actions"
+            exit 1
+          fi
           python verify_encryption.py
 
       - name: Test DataLoader functionality
         env:
           TEST_DATA_ENCRYPTION_KEY: ${{ secrets.TEST_DATA_ENCRYPTION_KEY }}
         run: |
+          if [ -z "$TEST_DATA_ENCRYPTION_KEY" ]; then
+            echo "❌ Error: TEST_DATA_ENCRYPTION_KEY secret is not set!"
+            echo "   Please add it in GitHub Settings > Secrets > Actions"
+            exit 1
+          fi
           python -c "
           import sys
           from infra.data_loader import DataLoader
