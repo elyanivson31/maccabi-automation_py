@@ -32,6 +32,7 @@ The test passes when:
 - An appointment is found that meets the threshold date criteria
 - The appointment is in the specified city
 - A Telegram notification is successfully sent
+- **The workflow automatically disables itself** to stop further scheduled runs
 
 ## Required GitHub Secrets
 
@@ -61,9 +62,21 @@ You can also trigger the workflow manually:
 3. Click **"Run workflow"** button
 4. Select the branch and click **"Run workflow"**
 
-## How to Disable the Workflow
+## Auto-Disable When Test Passes
 
-After 24 hours or when you want to stop the scheduled runs:
+**The workflow automatically disables itself when the test passes!**
+
+When an appointment is found:
+1. Telegram notification is sent
+2. Test passes (exits with code 0)
+3. Workflow uses GitHub API to disable itself
+4. No further scheduled runs will occur
+
+You can re-enable it anytime from the Actions tab if needed.
+
+## Manual Disable (Optional)
+
+If you want to stop the workflow before it finds an appointment:
 
 1. Go to **Actions** tab in your GitHub repository
 2. Click on **"Test Elon Shlomo - Every 5 Minutes"** in the left sidebar
@@ -92,7 +105,7 @@ The workflow shows approximate runtime in the logs:
 - Exit code: 0 (success)
 - Message: "✅ TEST PASSED! Appointment found!"
 - A Telegram notification is sent with appointment details
-- **Action Required**: Disable the workflow to stop further runs
+- **Workflow automatically disables itself** - no further runs will occur
 
 ### When Test Fails ❌
 - Exit code: 1 (failure)
