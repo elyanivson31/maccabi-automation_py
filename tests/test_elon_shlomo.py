@@ -12,15 +12,15 @@ def test_elon_shlomo(driver: WebDriver) -> bool:
     try:
         driver.maximize_window()  # 👈 Maximize after initialization
         data_loader = DataLoader()
-        contact = data_loader.get_contact_by_name("dana_elon_shlomo")
+        contact = data_loader.get_contact_by_name("yaniv_marina")
         selected_patient = contact["selectedPatient"]
 
-        threshold_str = data_loader.get_contact_setting("dana_elon_shlomo", "appointmentThresholdDate")
+        threshold_str = data_loader.get_contact_setting("yaniv_marina", "appointmentThresholdDate")
         threshold_date = datetime.fromisoformat(threshold_str)
 
-        service_name = data_loader.get_contact_setting("dana_elon_shlomo", "appointmentServiceName")
-        city_name = data_loader.get_contact_setting("dana_elon_shlomo", "appointmentDoctorCity")
-        appointment_type = data_loader.get_contact_setting("dana_elon_shlomo", "appointmentType")
+        service_name = data_loader.get_contact_setting("yaniv_marina", "appointmentServiceName")
+        city_name = data_loader.get_contact_setting("yaniv_marina", "appointmentDoctorCity")
+        appointment_type = data_loader.get_contact_setting("yaniv_marina", "appointmentType")
 
         web_flow = WebFlow(driver)
         web_flow.login_flow().login_to_portal(contact)

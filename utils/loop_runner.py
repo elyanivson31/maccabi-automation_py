@@ -42,7 +42,7 @@ import sys
 import os
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from tests.elon_shlomo import elon_shlomo
+from tests.test_elon_shlomo import elon_shlomo
 
 
 def timestamp():
