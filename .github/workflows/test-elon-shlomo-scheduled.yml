@@ -10,6 +10,9 @@ jobs:
   run-test-elon-shlomo:
     runs-on: ubuntu-latest
     timeout-minutes: 10  # Prevent hanging jobs
+    permissions:
+      actions: write  # Required to disable the workflow
+      contents: read
 
     steps:
       - name: Checkout code
@@ -95,7 +98,18 @@ jobs:
         run: |
           echo "🎉 SUCCESS! The test has passed!"
           echo "An appointment was found and Telegram notification was sent."
-          echo "You may want to disable this workflow now to stop further checks."
+          echo "This workflow will now be automatically disabled."
+
+      - name: Auto-disable workflow after success
+        if: steps.run_test.outputs.test_passed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "🛑 Disabling workflow to stop further scheduled runs..."
+          gh workflow disable "test-elon-shlomo-scheduled.yml" -R ${{ github.repository }}
+          echo "✅ Workflow disabled successfully!"
+          echo "The scheduled runs will stop after this execution."
+          echo "You can re-enable it anytime from the Actions tab if needed."
 
       - name: Report test failure
         if: steps.run_test.outputs.test_passed != 'true'
