@@ -8,7 +8,7 @@ from utils.appointment_utils import get_soonest_appointment_in_city
 from utils.notifier import notify_telegram_channel
 
 
-def elon_shlomo(driver: WebDriver) -> bool:
+def test_elon_shlomo(driver: WebDriver) -> bool:
     try:
         driver.maximize_window()  # 👈 Maximize after initialization
         data_loader = DataLoader()
@@ -58,5 +58,5 @@ def elon_shlomo(driver: WebDriver) -> bool:
         return False
 
     except Exception as e:
-        print(f"❗ Exception in elon_shlomo: {e}")
+        print(f"❗ Exception in test_elon_shlomo: {e}")
         raise
