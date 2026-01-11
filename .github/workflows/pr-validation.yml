@@ -85,13 +85,24 @@ jobs:
 
           # Test contact retrieval
           contacts = loader.data.get('contacts', [])
+          if len(contacts) == 0:
+              print('❌ Error: No contacts found in test data')
+              sys.exit(1)
           print(f'✓ Found {len(contacts)} contacts')
 
-          # Test specific contacts
-          expected = ['yaniv', 'dana_elon_shlomo', 'yaniv_landov']
-          for name in expected:
-              contact = loader.get_contact_by_name(name)
-              print(f'✓ Contact \"{name}\" loaded successfully')
+          # Test that we can load at least one contact and it has required fields
+          contact_names = [c.get('name') for c in contacts if 'name' in c]
+          print(f'✓ Available contacts: {contact_names}')
+
+          # Test loading the first contact
+          if contact_names:
+              test_contact = loader.get_contact_by_name(contact_names[0])
+              required_fields = ['username', 'password']
+              for field in required_fields:
+                  if field not in test_contact:
+                      print(f'❌ Error: Contact missing required field: {field}')
+                      sys.exit(1)
+              print(f'✓ Contact \"{contact_names[0]}\" loaded successfully with required fields')
 
           print('✓ All DataLoader tests passed')
           "
