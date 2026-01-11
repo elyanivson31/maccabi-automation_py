@@ -1,0 +1,131 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  validate-encryption-setup:
+    name: Validate Encryption & Data Loading
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install cryptography
+
+      - name: Verify encrypted file exists
+        run: |
+          if [ ! -f "test_data.json.enc" ]; then
+            echo "❌ Error: test_data.json.enc not found!"
+            exit 1
+          fi
+          echo "✓ Encrypted file exists"
+
+      - name: Verify test_data.json is in .gitignore
+        run: |
+          if ! grep -q "test_data.json" .gitignore; then
+            echo "❌ Error: test_data.json not in .gitignore!"
+            exit 1
+          fi
+          echo "✓ test_data.json is in .gitignore"
+
+      - name: Verify test_data.json is NOT committed
+        run: |
+          if git ls-files | grep -q "^test_data.json$"; then
+            echo "❌ Error: test_data.json should not be committed to git!"
+            echo "   Only test_data.json.enc should be committed."
+            exit 1
+          fi
+          echo "✓ test_data.json is not committed (correct)"
+
+      - name: Run encryption verification tests
+        env:
+          TEST_DATA_ENCRYPTION_KEY: ${{ secrets.TEST_DATA_ENCRYPTION_KEY }}
+        run: |
+          python verify_encryption.py
+
+      - name: Test DataLoader functionality
+        env:
+          TEST_DATA_ENCRYPTION_KEY: ${{ secrets.TEST_DATA_ENCRYPTION_KEY }}
+        run: |
+          python -c "
+          import sys
+          from infra.data_loader import DataLoader
+
+          print('Testing DataLoader with encrypted data...')
+
+          # Test initialization
+          loader = DataLoader()
+          print('✓ DataLoader initialized')
+
+          # Test contact retrieval
+          contacts = loader.data.get('contacts', [])
+          print(f'✓ Found {len(contacts)} contacts')
+
+          # Test specific contacts
+          expected = ['yaniv', 'dana_elon_shlomo', 'yaniv_landov']
+          for name in expected:
+              contact = loader.get_contact_by_name(name)
+              print(f'✓ Contact \"{name}\" loaded successfully')
+
+          print('✓ All DataLoader tests passed')
+          "
+
+  validate-code-quality:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Check Python syntax
+        run: |
+          python -m py_compile infra/*.py
+          python -m py_compile tests/*.py
+          echo "✓ Python syntax is valid"
+
+      - name: Verify project structure
+        run: |
+          echo "Checking project structure..."
+
+          # Check required files exist
+          required_files=(
+            "infra/crypto_utils.py"
+            "infra/data_loader.py"
+            "setup_encryption.py"
+            "verify_encryption.py"
+            "SECURITY_SETUP.md"
+            ".env.example"
+            "test_data.json.enc"
+          )
+
+          for file in "${required_files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "❌ Missing required file: $file"
+              exit 1
+            fi
+            echo "✓ $file exists"
+          done
+
+          echo "✓ Project structure is valid"
