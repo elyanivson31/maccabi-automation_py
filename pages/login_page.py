@@ -22,11 +22,21 @@ class LoginPage:
         wait.until(EC.visibility_of_element_located((By.ID, "IdentifyWithPassword")))
 
 
+
     def enter_username(self, username):
-        self.driver.find_element(By.ID, "identifyWithPasswordCitizenId").send_keys(username)
+        self.driver.find_element(By.ID, "idNumber2").send_keys(username)
 
     def enter_password(self, password):
         self.driver.find_element(By.ID, "password").send_keys(password)
 
     def click_login(self):
-        self.driver.find_element(By.CSS_SELECTOR, "button.submit.validatePassword").click()
+        self.driver.find_element(By.ID, "enterWithPasswordBtn").click()
+
+    def enter_id_number(self, id_number):
+        self.driver.find_element(By.ID, "idNumber").send_keys(id_number)
+
+    def click_next_to_choose_login_method(self):
+        self.driver.find_element(By.ID, "chooseTypeBtn").click()
+
+    def click_login_with_password_type(self):
+        self.driver.find_element(By.LINK_TEXT, "כניסה עם סיסמה").click()

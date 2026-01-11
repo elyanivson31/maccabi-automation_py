@@ -27,8 +27,12 @@ class LoginFlow:
         print("HTML snapshot:")
         print(self.driver.page_source[:3000])  # print first 3000 characters only to avoid overflow
 
-        self.login_page.click_password_login_link()
+        #self.login_page.click_password_login_link()
         
+        self.login_page.enter_id_number(contact["username"])
+        self.login_page.click_next_to_choose_login_method()
+        self.login_page.click_login_with_password_type()
+
         self.login_page.enter_username(contact["username"])
         self.login_page.enter_password(contact["password"])
         self.login_page.click_login()

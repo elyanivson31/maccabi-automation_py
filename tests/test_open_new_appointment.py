@@ -14,18 +14,18 @@ from utils.notifier import notify_telegram_channel
 
 def test_open_new_appointment(driver: WebDriver):
     data_loader = DataLoader()
-    contact = data_loader.get_contact_by_name("dana_elon_shlomo")
+    contact = data_loader.get_contact_by_name("yaniv_marina")
     selected_patient = contact["selectedPatient"]
 
-    threshold_str = data_loader.get_contact_setting("dana_elon_shlomo", "appointmentThresholdDate")
+    threshold_str = data_loader.get_contact_setting("yaniv_marina", "appointmentThresholdDate")
     threshold_date = datetime.fromisoformat(threshold_str)
 
 
 
-    service_name = data_loader.get_contact_setting("dana_elon_shlomo", "appointmentServiceName")
+    service_name = data_loader.get_contact_setting("yaniv_marina", "appointmentServiceName")
 
-    city_name = data_loader.get_contact_setting("dana_elon_shlomo", "appointmentDoctorCity")
-    appointment_type = data_loader.get_contact_setting("dana_elon_shlomo", "appointmentType")
+    city_name = data_loader.get_contact_setting("yaniv_marina", "appointmentDoctorCity")
+    appointment_type = data_loader.get_contact_setting("yaniv_marina", "appointmentType")
 
     # Create and reuse WebFlow instance
     web_flow = WebFlow(driver)
@@ -102,8 +102,8 @@ def test_open_new_appointment(driver: WebDriver):
     if success:
           notify_telegram_channel(
     f"🎉 התור נקבע בהצלחה!!\n"
-    f"👤 מטופל: {contact['selectedPatient']}\n"
-    f"🧑‍⚕️ רופא: {contact['doctorName']}\n"
+    f"👤 מטופל: {contact["selectedPatient"]}\n"
+    f"🧑‍⚕️ רופא: {contact["doctorName"]}\n"
 )
     else:
         raise AssertionError("❌ קביעת התור לא הצליחה או שההודעה של סיום התהליך השתנתה")
