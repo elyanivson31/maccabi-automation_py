@@ -2,3 +2,10 @@
 __pycache__/
 *.pyc
 *.pyo
+
+# Sensitive test data (encrypted version is committed)
+test_data.json
+.encryption_key_temp
+
+# Environment variables
+.env

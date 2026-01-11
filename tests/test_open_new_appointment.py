@@ -102,8 +102,8 @@ def test_open_new_appointment(driver: WebDriver):
     if success:
           notify_telegram_channel(
     f"🎉 התור נקבע בהצלחה!!\n"
-    f"👤 מטופל: {contact["selectedPatient"]}\n"
-    f"🧑‍⚕️ רופא: {contact["doctorName"]}\n"
+    f"👤 מטופל: {contact['selectedPatient']}\n"
+    f"🧑‍⚕️ רופא: {contact['doctorName']}\n"
 )
     else:
         raise AssertionError("❌ קביעת התור לא הצליחה או שההודעה של סיום התהליך השתנתה")

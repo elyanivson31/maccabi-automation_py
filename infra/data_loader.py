@@ -1,8 +1,12 @@
 import json
 import os
+from infra.crypto_utils import CryptoUtils
 
 class DataLoader:
     def __init__(self, file_path="test_data.json"):
+        # Ensure the decrypted file exists before loading
+        CryptoUtils.ensure_decrypted_file_exists()
+
         root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         full_path = os.path.join(root_dir, file_path)
 
