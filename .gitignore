@@ -2,6 +2,7 @@
 __pycache__/
 *.pyc
 *.pyo
+.pytest_cache/
 
 # Sensitive test data (encrypted version is committed)
 test_data.json
