@@ -1,8 +1,10 @@
 from telegram import Bot
 import asyncio
+import os
 
-BOT_TOKEN = "8292608599:AAEdJK3nIph7ToUHFXVdtsYzipeKrCmWnEk"
-CHANNEL_ID = -1002621100583  # numeric ID for the channel
+# Read from environment variables with fallback to hardcoded values for local development
+BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "8292608599:AAEdJK3nIph7ToUHFXVdtsYzipeKrCmWnEk")
+CHANNEL_ID = int(os.getenv("TELEGRAM_CHANNEL_ID", "-1002621100583"))  # numeric ID for the channel
 
 async def _send_message_async(message: str):
     bot = Bot(token=BOT_TOKEN)
