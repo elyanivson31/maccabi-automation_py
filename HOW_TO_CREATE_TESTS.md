@@ -15,10 +15,10 @@ test_*.py          ← Recommended (e.g., test_login.py)
 
 **Examples:**
 - ✅ `test_open_new_appointment.py`
-- ✅ `test_elon_shlomo.py`
+- ✅ `test_get_earlier_appointment.py`
 - ✅ `test_data_loader.py`
 - ✅ `login_test.py`
-- ❌ `elon_shlomo.py` (missing `test_` prefix)
+- ❌ `get_earlier_appointment.py` (missing `test_` prefix)
 - ❌ `my_tests.py` (doesn't match pattern)
 
 ### ✅ Function Naming
@@ -32,7 +32,7 @@ def test_something(driver: WebDriver):  ← Correct
 def test_login():  ← Correct
     # test code here
 
-def elon_shlomo(driver: WebDriver):  ← Won't be discovered!
+def get_earlier_appointment(driver: WebDriver):  ← Won't be discovered!
     # test code here
 ```
 
@@ -69,7 +69,7 @@ def test_book_appointment(driver):
     """Test booking an appointment."""
     # Arrange
     data_loader = DataLoader()
-    contact = data_loader.get_contact_by_name("dana_elon_shlomo")
+    contact = data_loader.get_contact_by_name("yaniv_marina")
     web_flow = WebFlow(driver)
 
     # Act
@@ -112,7 +112,7 @@ maccabi-automation_py/
 ├── tests/
 │   ├── __init__.py                  ← Required for package
 │   ├── test_open_new_appointment.py ✅
-│   ├── test_elon_shlomo.py          ✅
+│   ├── test_get_earlier_appointment.py  ✅
 │   ├── test_data_loader.py          ✅
 │   └── test_your_new_test.py        ✅
 ├── infra/

@@ -1,10 +1,10 @@
-# Scheduled Test Workflow - test_elon_shlomo
+# Scheduled Test Workflow - test_get_earlier_appointment
 
-This document explains the GitHub Actions workflow that runs `test_elon_shlomo` automatically every 5 minutes until the test passes.
+This document explains the GitHub Actions workflow that runs `test_get_earlier_appointment` automatically every 5 minutes until the test passes.
 
 ## Overview
 
-The workflow `test-elon-shlomo-scheduled.yml` is configured to:
+The workflow `test-get-earlier-appointment-scheduled.yml` is configured to:
 - Run every 5 minutes (minimum interval for GitHub Actions scheduled workflows)
 - Continue running until the test passes (finds an available appointment)
 - Install all necessary dependencies including Chrome and Selenium
@@ -24,7 +24,7 @@ The workflow `test-elon-shlomo-scheduled.yml` is configured to:
 3. Install all Python dependencies from `requirements.txt`
 4. Verify encrypted test data exists
 5. Verify required secrets are configured
-6. Run `test_elon_shlomo` with pytest
+6. Run `test_get_earlier_appointment` with pytest
 7. Report results and upload logs
 
 ### Success Condition
@@ -58,7 +58,7 @@ The workflow is automatically enabled when pushed to the repository. It will sta
 ### Manual Trigger
 You can also trigger the workflow manually:
 1. Go to **Actions** tab in GitHub
-2. Select **"Test Elon Shlomo - Every 5 Minutes"**
+2. Select **"Test Get Earlier Appointment - Every 5 Minutes"**
 3. Click **"Run workflow"** button
 4. Select the branch and click **"Run workflow"**
 
@@ -79,14 +79,14 @@ You can re-enable it anytime from the Actions tab if needed.
 If you want to stop the workflow before it finds an appointment:
 
 1. Go to **Actions** tab in your GitHub repository
-2. Click on **"Test Elon Shlomo - Every 5 Minutes"** in the left sidebar
+2. Click on **"Test Get Earlier Appointment - Every 5 Minutes"** in the left sidebar
 3. Click the **"..."** menu button (three dots) in the top right
 4. Select **"Disable workflow"**
 
 ## Monitoring the Workflow
 
 ### View Run History
-- Navigate to **Actions** → **"Test Elon Shlomo - Every 5 Minutes"**
+- Navigate to **Actions** → **"Test Get Earlier Appointment - Every 5 Minutes"**
 - See all runs with their status (✅ Success / ❌ Failure)
 
 ### Check Logs
@@ -160,11 +160,11 @@ If you prefer to run locally instead of GitHub Actions:
 
 ```bash
 # Run once
-pytest tests/test_elon_shlomo.py::test_elon_shlomo -v
+pytest tests/test_get_earlier_appointment.py::test_get_earlier_appointment -v
 
 # Run in a loop (Unix/Mac)
 while true; do
-  pytest tests/test_elon_shlomo.py::test_elon_shlomo -v
+  pytest tests/test_get_earlier_appointment.py::test_get_earlier_appointment -v
   if [ $? -eq 0 ]; then
     echo "Test passed! Exiting."
     break
