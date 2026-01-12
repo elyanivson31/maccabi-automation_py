@@ -13,12 +13,21 @@ class MainPage:
     def click_new_appointment_button(self):
             """
             Clicks the 'זימון תור חדש' (New Appointment) button on the main/home page.
+            Includes scroll into view and JavaScript click fallback for headless mode reliability.
             """
             wait = WebDriverWait(self.driver, 30)
             new_appointment_btn = wait.until(EC.element_to_be_clickable(
                 (By.XPATH, "//button[.//h2[text()='זימון תור חדש']]")
             ))
-            new_appointment_btn.click()
+            # Scroll element into view to ensure it's visible (important for headless mode)
+            self.driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", new_appointment_btn)
+            time.sleep(0.5)  # Brief pause after scroll
+            try:
+                new_appointment_btn.click()
+            except Exception as e:
+                # Fallback to JavaScript click if regular click fails (common in headless mode)
+                print(f"Regular click failed, using JavaScript click: {e}")
+                self.driver.execute_script("arguments[0].click();", new_appointment_btn)
 
     def switch_to_patient(self, patient_name):
         wait = WebDriverWait(self.driver, 20)

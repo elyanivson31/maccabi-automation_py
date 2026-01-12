@@ -10,7 +10,8 @@ from utils.notifier import notify_telegram_channel
 
 def test_get_earlier_appointment(driver: WebDriver) -> bool:
     try:
-        driver.maximize_window()  # 👈 Maximize after initialization
+        # Window size is already set in driver_factory.py (1920x1080)
+        # No need to maximize in headless mode as it can cause issues
         data_loader = DataLoader()
         contact = data_loader.get_contact_by_name("yaniv_marina")
         selected_patient = contact["selectedPatient"]
