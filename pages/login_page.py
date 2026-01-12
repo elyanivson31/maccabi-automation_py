@@ -30,7 +30,17 @@ class LoginPage:
         self.driver.find_element(By.ID, "password").send_keys(password)
 
     def click_login(self):
-        self.driver.find_element(By.ID, "enterWithPasswordBtn").click()
+        wait = WebDriverWait(self.driver, 30)
+        login_button = wait.until(EC.element_to_be_clickable((By.ID, "enterWithPasswordBtn")))
+        # Scroll element into view to ensure it's not covered
+        self.driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", login_button)
+        time.sleep(0.5)  # Brief pause after scroll
+        try:
+            login_button.click()
+        except Exception as e:
+            # Fallback to JavaScript click if regular click fails
+            print(f"Regular click failed, using JavaScript click: {e}")
+            self.driver.execute_script("arguments[0].click();", login_button)
 
     def enter_id_number(self, id_number):
         self.driver.find_element(By.ID, "idNumber").send_keys(id_number)
