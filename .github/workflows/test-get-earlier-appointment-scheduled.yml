@@ -77,18 +77,44 @@ jobs:
             echo "⚠️ Warning: TELEGRAM_CHANNEL_ID not set - notifications will fail"
           fi
 
+      - name: Setup Xvfb for video recording
+        run: |
+          # Ensure Xvfb is running on display :99
+          sudo apt-get install -y xvfb x11-utils
+          Xvfb :99 -screen 0 1920x1080x24 &
+          echo $! > /tmp/xvfb_pid
+          export DISPLAY=:99
+          sleep 2
+          echo "✓ Xvfb started on display :99 (PID: $(cat /tmp/xvfb_pid))"
+
       - name: Start video recording
         run: |
           mkdir -p videos
+          export DISPLAY=:99
+
+          # Verify display is available
+          if ! xdpyinfo -display :99 > /dev/null 2>&1; then
+            echo "❌ Display :99 is not available"
+            exit 1
+          fi
+          echo "✓ Display :99 is available"
+
           # Start ffmpeg recording in the background
-          # DISPLAY=:99 is the default Xvfb display used by GitHub Actions
           ffmpeg -video_size 1920x1080 -framerate 25 -f x11grab -i :99.0 \
             -codec:v libx264 -preset ultrafast -pix_fmt yuv420p \
             videos/test-recording-${{ github.run_number }}.mp4 \
-            > /dev/null 2>&1 &
+            > /tmp/ffmpeg.log 2>&1 &
           echo $! > /tmp/ffmpeg_pid
+          sleep 2
+
+          # Check if ffmpeg is still running
+          if ! kill -0 $(cat /tmp/ffmpeg_pid) 2>/dev/null; then
+            echo "❌ FFmpeg failed to start. Log:"
+            cat /tmp/ffmpeg.log
+            exit 1
+          fi
+
           echo "🎥 Video recording started (PID: $(cat /tmp/ffmpeg_pid))"
-          sleep 2  # Give ffmpeg time to initialize
 
       - name: Run test_get_earlier_appointment
         id: run_test
@@ -97,6 +123,7 @@ jobs:
           TEST_DATA_ENCRYPTION_KEY: ${{ secrets.TEST_DATA_ENCRYPTION_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          DISPLAY: :99
         run: |
           echo "🚀 Running test_get_earlier_appointment..."
           echo "Run time: $(date '+%Y-%m-%d %H:%M:%S UTC')"
@@ -118,10 +145,26 @@ jobs:
           if [ -f /tmp/ffmpeg_pid ]; then
             FFMPEG_PID=$(cat /tmp/ffmpeg_pid)
             echo "🛑 Stopping video recording (PID: $FFMPEG_PID)"
-            kill -INT $FFMPEG_PID || true
-            # Wait for ffmpeg to finish encoding
-            sleep 3
-            echo "✅ Video recording stopped and saved"
+
+            # Check if process is still running
+            if kill -0 $FFMPEG_PID 2>/dev/null; then
+              kill -INT $FFMPEG_PID || true
+              # Wait for ffmpeg to finish encoding
+              sleep 5
+            else
+              echo "⚠️ FFmpeg process already stopped"
+            fi
+
+            # Verify video was created
+            if ls videos/*.mp4 1> /dev/null 2>&1; then
+              echo "✅ Video recording saved:"
+              ls -lh videos/
+            else
+              echo "❌ No video file found. FFmpeg log:"
+              cat /tmp/ffmpeg.log || echo "No ffmpeg log available"
+            fi
+          else
+            echo "⚠️ No ffmpeg PID file found"
           fi
 
       - name: Report test success
