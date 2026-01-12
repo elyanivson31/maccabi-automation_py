@@ -42,7 +42,7 @@ import sys
 import os
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from tests.test_elon_shlomo import elon_shlomo
+from tests.test_get_earlier_appointment import test_get_earlier_appointment
 
 
 def timestamp():
@@ -56,7 +56,7 @@ def run_loop_for_max_duration(max_minutes=900, interval_minutes=10):
         print(f"\n{timestamp()} 🔄 Running test...")
         driver = webdriver.Chrome()
         try:
-            success = elon_shlomo(driver)
+            success = test_get_earlier_appointment(driver)
             if success:
                 print(f"{timestamp()} ✅ Test passed. Stopping loop.")
                 break

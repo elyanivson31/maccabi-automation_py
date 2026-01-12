@@ -1,4 +1,4 @@
-name: Test Elon Shlomo - Every 5 Minutes
+name: Test Get Earlier Appointment - Every 5 Minutes
 
 on:
   schedule:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:  # Allow manual triggering
 
 jobs:
-  run-test-elon-shlomo:
+  run-test-get-earlier-appointment:
     runs-on: ubuntu-latest
     timeout-minutes: 10  # Prevent hanging jobs
     permissions:
@@ -90,7 +90,7 @@ jobs:
           echo "🎥 Video recording started (PID: $(cat /tmp/ffmpeg_pid))"
           sleep 2  # Give ffmpeg time to initialize
 
-      - name: Run test_elon_shlomo
+      - name: Run test_get_earlier_appointment
         id: run_test
         continue-on-error: true
         env:
@@ -98,11 +98,11 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
         run: |
-          echo "🚀 Running test_elon_shlomo..."
+          echo "🚀 Running test_get_earlier_appointment..."
           echo "Run time: $(date '+%Y-%m-%d %H:%M:%S UTC')"
 
           # Run the specific test
-          if pytest tests/test_elon_shlomo.py::test_elon_shlomo -v; then
+          if pytest tests/test_get_earlier_appointment.py::test_get_earlier_appointment -v; then
             echo "test_passed=true" >> $GITHUB_OUTPUT
             echo "✅ TEST PASSED! Appointment found!"
             exit 0
@@ -137,7 +137,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           echo "🛑 Disabling workflow to stop further scheduled runs..."
-          gh workflow disable "test-elon-shlomo-scheduled.yml" -R ${{ github.repository }}
+          gh workflow disable "test-get-earlier-appointment-scheduled.yml" -R ${{ github.repository }}
           echo "✅ Workflow disabled successfully!"
           echo "The scheduled runs will stop after this execution."
           echo "You can re-enable it anytime from the Actions tab if needed."
@@ -177,7 +177,7 @@ jobs:
         run: |
           echo "⏰ This workflow runs every 5 minutes"
           echo "⚠️ Note: After 24 hours (288 runs), consider disabling this workflow if the test hasn't passed"
-          echo "To disable: Go to Actions > Test Elon Shlomo - Every 5 Minutes > '...' menu > Disable workflow"
+          echo "To disable: Go to Actions > Test Get Earlier Appointment - Every 5 Minutes > '...' menu > Disable workflow"
           echo ""
           echo "Current run number: ${{ github.run_number }}"
           echo "Approximate hours running: $(((${{ github.run_number }} * 5) / 60))"

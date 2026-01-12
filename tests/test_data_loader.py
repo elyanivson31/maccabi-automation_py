@@ -91,7 +91,7 @@ class TestDataLoader:
 
         contact_names = [c["name"] for c in contacts]
         assert "yaniv" in contact_names
-        assert "dana_elon_shlomo" in contact_names
+        assert "yaniv_marina" in contact_names
         assert "yaniv_landov" in contact_names
 
     def test_data_integrity_after_decryption(self):
