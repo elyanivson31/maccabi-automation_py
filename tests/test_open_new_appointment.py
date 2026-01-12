@@ -67,6 +67,15 @@ def test_open_new_appointment(driver: WebDriver):
             f"👤 מטופל: {contact['selectedPatient']}\n"
             f"🧑‍⚕️ רופא: {contact['doctorName']}\n"
             f"🗓️ תאריך זמין: {soonest_date.strftime('%d/%m/%Y %H:%M')}\n"
+            f"📅 סף תאריך: {threshold_date.strftime('%d/%m/%Y')}\n"
+        )
+    else:
+        notify_telegram_channel(
+            f"ℹ️ בדיקת תורים הושלמה\n"
+            f"👤 מטופל: {contact['selectedPatient']}\n"
+            f"🧑‍⚕️ רופא: {contact['doctorName']}\n"
+            f"❌ לא נמצא תור לפני {threshold_date.strftime('%d/%m/%Y')}\n"
+            f"⚠️ ממשיך בתהליך בכל זאת...\n"
         )
 
 
