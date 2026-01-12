@@ -46,7 +46,27 @@ class LoginPage:
         self.driver.find_element(By.ID, "idNumber").send_keys(id_number)
 
     def click_next_to_choose_login_method(self):
-        self.driver.find_element(By.ID, "chooseTypeBtn").click()
+        wait = WebDriverWait(self.driver, 30)
+        button = wait.until(EC.element_to_be_clickable((By.ID, "chooseTypeBtn")))
+        # Scroll element into view to ensure visibility (important for headless mode)
+        self.driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", button)
+        time.sleep(0.3)  # Brief pause after scroll
+        try:
+            button.click()
+        except Exception as e:
+            # Fallback to JavaScript click if regular click fails
+            print(f"Regular click failed, using JavaScript click: {e}")
+            self.driver.execute_script("arguments[0].click();", button)
 
     def click_login_with_password_type(self):
-        self.driver.find_element(By.LINK_TEXT, "כניסה עם סיסמה").click()
+        wait = WebDriverWait(self.driver, 30)
+        link = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, "כניסה עם סיסמה")))
+        # Scroll element into view to ensure visibility (important for headless mode)
+        self.driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", link)
+        time.sleep(0.3)  # Brief pause after scroll
+        try:
+            link.click()
+        except Exception as e:
+            # Fallback to JavaScript click if regular click fails
+            print(f"Regular click failed, using JavaScript click: {e}")
+            self.driver.execute_script("arguments[0].click();", link)
