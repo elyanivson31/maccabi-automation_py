@@ -34,6 +34,12 @@ jobs:
           which google-chrome-stable
           google-chrome-stable --version
 
+      - name: Install video recording dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          echo "✓ FFmpeg installed for video recording"
+
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
@@ -71,6 +77,19 @@ jobs:
             echo "⚠️ Warning: TELEGRAM_CHANNEL_ID not set - notifications will fail"
           fi
 
+      - name: Start video recording
+        run: |
+          mkdir -p videos
+          # Start ffmpeg recording in the background
+          # DISPLAY=:99 is the default Xvfb display used by GitHub Actions
+          ffmpeg -video_size 1920x1080 -framerate 25 -f x11grab -i :99.0 \
+            -codec:v libx264 -preset ultrafast -pix_fmt yuv420p \
+            videos/test-recording-${{ github.run_number }}.mp4 \
+            > /dev/null 2>&1 &
+          echo $! > /tmp/ffmpeg_pid
+          echo "🎥 Video recording started (PID: $(cat /tmp/ffmpeg_pid))"
+          sleep 2  # Give ffmpeg time to initialize
+
       - name: Run test_elon_shlomo
         id: run_test
         continue-on-error: true
@@ -91,6 +110,18 @@ jobs:
             echo "test_passed=false" >> $GITHUB_OUTPUT
             echo "❌ Test failed - no appointment found yet"
             exit 1
+          fi
+
+      - name: Stop video recording
+        if: always()
+        run: |
+          if [ -f /tmp/ffmpeg_pid ]; then
+            FFMPEG_PID=$(cat /tmp/ffmpeg_pid)
+            echo "🛑 Stopping video recording (PID: $FFMPEG_PID)"
+            kill -INT $FFMPEG_PID || true
+            # Wait for ffmpeg to finish encoding
+            sleep 3
+            echo "✅ Video recording stopped and saved"
           fi
 
       - name: Report test success
@@ -116,6 +147,15 @@ jobs:
         run: |
           echo "⏳ Test did not pass this time. Will retry in 5 minutes."
           echo "This workflow will continue checking every 5 minutes."
+
+      - name: Upload test video
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-video-${{ github.run_number }}
+          path: videos/*.mp4
+          retention-days: 30
+          if-no-files-found: warn
 
       - name: Upload test results (if available)
         if: always()
