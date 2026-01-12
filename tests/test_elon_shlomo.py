@@ -52,10 +52,18 @@ def test_elon_shlomo(driver: WebDriver) -> bool:
                 f"👤 מטופל: {contact['selectedPatient']}\n"
                 f"🧑‍⚕️ רופא: {contact['doctorName']}\n"
                 f"🗓️ תאריך זמין: {soonest_date.strftime('%d/%m/%Y %H:%M')}\n"
+                f"📅 סף תאריך: {threshold_date.strftime('%d/%m/%Y')}\n"
             )
             return True
-
-        return False
+        else:
+            notify_telegram_channel(
+                f"ℹ️ בדיקת תורים הושלמה\n"
+                f"👤 מטופל: {contact['selectedPatient']}\n"
+                f"🧑‍⚕️ רופא: {contact['doctorName']}\n"
+                f"🏙️ עיר: {city_name}\n"
+                f"❌ לא נמצא תור לפני {threshold_date.strftime('%d/%m/%Y')}\n"
+            )
+            return False
 
     except Exception as e:
         print(f"❗ Exception in test_elon_shlomo: {e}")
