@@ -3,8 +3,9 @@ import asyncio
 import os
 
 # Read from environment variables with fallback to hardcoded values for local development
-BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "8292608599:AAEdJK3nIph7ToUHFXVdtsYzipeKrCmWnEk")
-CHANNEL_ID = int(os.getenv("TELEGRAM_CHANNEL_ID", "-1002621100583"))  # numeric ID for the channel
+# Use 'or' to handle empty strings from GitHub Actions when secrets aren't set
+BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN") or "8292608599:AAEdJK3nIph7ToUHFXVdtsYzipeKrCmWnEk"
+CHANNEL_ID = int(os.getenv("TELEGRAM_CHANNEL_ID") or "-1002621100583")  # numeric ID for the channel
 
 async def _send_message_async(message: str):
     bot = Bot(token=BOT_TOKEN)
